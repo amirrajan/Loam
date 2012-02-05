@@ -5,10 +5,3 @@ C:\Development\OakWarmup\__NAME__\__NAME__.Tests\obj\Debug\ResolveAssemblyRefere
 C:\Development\OakWarmup\__NAME__\__NAME__.Tests\obj\Debug\__NAME__.Tests.dll
 C:\Development\OakWarmup\__NAME__\__NAME__.Tests\obj\Debug\__NAME__.Tests.pdb
 C:\Development\OakWarmup\__NAME__\__NAME__.Tests\bin\Debug\NSpec.dll
-c:\Development\Loam\__NAME__.Tests\bin\Debug\__NAME__.Tests.dll.config
-c:\Development\Loam\__NAME__.Tests\bin\Debug\__NAME__.Tests.dll
-c:\Development\Loam\__NAME__.Tests\bin\Debug\__NAME__.Tests.pdb
-c:\Development\Loam\__NAME__.Tests\bin\Debug\NSpec.dll
-c:\Development\Loam\__NAME__.Tests\obj\Debug\ResolveAssemblyReference.cache
-c:\Development\Loam\__NAME__.Tests\obj\Debug\__NAME__.Tests.dll
-c:\Development\Loam\__NAME__.Tests\obj\Debug\__NAME__.Tests.pdb
