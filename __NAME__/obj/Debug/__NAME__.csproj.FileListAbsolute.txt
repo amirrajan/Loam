@@ -3,3 +3,8 @@ C:\Development\OakWarmup\__NAME__\__NAME__\bin\__NAME__.pdb
 C:\Development\OakWarmup\__NAME__\__NAME__\obj\Debug\ResolveAssemblyReference.cache
 C:\Development\OakWarmup\__NAME__\__NAME__\obj\Debug\__NAME__.dll
 C:\Development\OakWarmup\__NAME__\__NAME__\obj\Debug\__NAME__.pdb
+c:\Development\Loam\__NAME__\bin\__NAME__.dll
+c:\Development\Loam\__NAME__\bin\__NAME__.pdb
+c:\Development\Loam\__NAME__\obj\Debug\ResolveAssemblyReference.cache
+c:\Development\Loam\__NAME__\obj\Debug\__NAME__.dll
+c:\Development\Loam\__NAME__\obj\Debug\__NAME__.pdb
