@@ -32,17 +32,49 @@ namespace Oak
 
     public delegate dynamic DynamicMethod();
 
-    [DebuggerNonUserCode]
+    //[DebuggerNonUserCode]
     public class Gemini : DynamicObject
     {
+        private bool initialized;
+
+        private MethodInfo initialization = null;
+
+        private static List<KeyValuePair<Type, Func<dynamic, dynamic>>> Includes = new List<KeyValuePair<Type, Func<dynamic, dynamic>>>();
+
+        private static List<KeyValuePair<Type, Action<dynamic>>> MethodHooks = new List<KeyValuePair<Type, Action<dynamic>>>();
+
         public dynamic Expando { get; set; }
+
+        public static void Include<A, B>()
+        {
+            Includes.Add(new KeyValuePair<Type, Func<dynamic, dynamic>>(typeof(A), (i) =>
+            {
+                var constructor = typeof(B).GetConstructor(new Type[] { typeof(object) });
+
+                constructor.Invoke(new object[] { i });
+
+                return null;
+            }));
+        }
+
+        public static void Extend<T>(Func<dynamic, dynamic> extension)
+        {
+            Includes.Add(new KeyValuePair<Type, Func<dynamic, dynamic>>(typeof(T), extension));
+        }
+
+        public static void Extend<T>(Action<dynamic> extension)
+        {
+            Includes.Add(new KeyValuePair<Type, Func<dynamic, dynamic>>(typeof(T), (i) => { extension(i); return null; }));
+        }
+
+        public static void MethodDefined<T>(Action<dynamic> extension)
+        {
+            MethodHooks.Add(new KeyValuePair<Type, Action<dynamic>>(typeof(T), extension));
+        }
 
         protected dynamic _
         {
-            get
-            {
-                return this as dynamic;
-            }
+            get { return this as dynamic; }
         }
 
         public Gemini()
@@ -60,19 +92,45 @@ namespace Oak
             else Expando = dto.ToExpando();
 
             foreach (var method in DynamicDelegates()) AddDynamicMember(method);
+
+            var types = new List<Type>();
+
+            var currentType = this.GetType();
+
+            while (currentType != typeof(object))
+            {
+                types.Add(currentType);
+
+                currentType = currentType.BaseType;
+            }
+
+            var includes = Includes.Where(s => types.Contains(s.Key));
+
+            foreach (var include in includes)
+            {
+                object result = (include.Value(this) as object);
+
+                if (result == null) continue;
+
+                (result.ToExpando() as IDictionary<string, object>).ToList().ForEach(s => SetMember(s.Key, s.Value));
+            }
+
+            initialized = false;
         }
 
         private void AddDynamicMember(MethodInfo method)
         {
             var parameters = method.GetParameters().ToList();
 
-            if (IsDynamicFunction(method, parameters)) TrySetMember(method.Name, DynamicFunctionFor(method));
+            if (method.Name == "Initialize") initialization = method;
 
-            if (IsDynamicFunctionWithParam(method, parameters)) TrySetMember(method.Name, DynamicFunctionWithParamFor(method));
+            else if (IsDynamicFunction(method, parameters)) TrySetMember(method.Name, DynamicFunctionFor(method));
 
-            if (IsDynamicMethod(method, parameters)) TrySetMember(method.Name, DynamicMethodFor(method));
+            else if (IsDynamicFunctionWithParam(method, parameters)) TrySetMember(method.Name, DynamicFunctionWithParamFor(method));
 
-            if (IsDynamicMethodWithParam(method, parameters)) TrySetMember(method.Name, DynamicMethodWithParamFor(method));
+            else if (IsDynamicMethod(method, parameters)) TrySetMember(method.Name, DynamicMethodFor(method));
+
+            else if (IsDynamicMethodWithParam(method, parameters)) TrySetMember(method.Name, DynamicMethodWithParamFor(method));
         }
 
         public DynamicFunction DynamicFunctionFor(MethodInfo method)
@@ -193,6 +251,8 @@ namespace Oak
 
         public bool TryGetMember(string name, out object result)
         {
+            InitializeIfNeeded(name);
+
             var dictionary = Hash();
 
             if (dictionary.ContainsKey(name))
@@ -225,6 +285,17 @@ namespace Oak
             return false;
         }
 
+        void InitializeIfNeeded(string property)
+        {
+            if (initialized) return;
+
+            initialized = true;
+
+            var throwAway = new object();
+
+            if (initialization != null) initialization.Invoke(this, null);
+        }
+
         public virtual dynamic GetMember(string property)
         {
             object result = null;
@@ -239,9 +310,14 @@ namespace Oak
                 ".  These are the members that exist on this instance: " + string.Join(", ", Hash().Select(s => s.Key + " (" + s.Value.GetType().Name + ")")));
         }
 
+        public virtual void SetMember(string property, object value, bool suppress)
+        {
+            TrySetMember(property, value, suppress);
+        }
+
         public virtual void SetMember(string property, object value)
         {
-            TrySetMember(property, value);
+            TrySetMember(property, value, suppress: false);
         }
 
         public virtual void SetMembers(object o)
@@ -265,11 +341,13 @@ namespace Oak
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            return TrySetMember(binder.Name, value);
+            return TrySetMember(binder.Name, value, suppress: false);
         }
 
-        public bool TrySetMember(string property, object value)
+        public bool TrySetMember(string property, object value, bool suppress = false)
         {
+            InitializeIfNeeded(property);
+
             var dictionary = Hash();
 
             if (dictionary.ContainsKey(property))
@@ -300,6 +378,13 @@ namespace Oak
 
             dictionary.Add(property, value);
 
+            if (!suppress)
+            {
+                var hooks = MethodHooks.Where(s => s.Key == this.GetType());
+
+                foreach (var hook in hooks) hook.Value(new { Name = property, Instance = this });
+            }
+
             return true;
         }
 
@@ -310,6 +395,8 @@ namespace Oak
 
         public virtual IDictionary<string, object> Hash()
         {
+            InitializeIfNeeded("Hash");
+
             return Expando as IDictionary<string, object>;
         }
 
@@ -339,6 +426,8 @@ namespace Oak
 
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
+            InitializeIfNeeded(binder.Name);
+
             result = null;
 
             if (!Hash().ContainsKey(binder.Name))
@@ -426,6 +515,29 @@ namespace Oak
         private bool AllParametersAreNamed(object[] args, IEnumerable<string> argNames)
         {
             return args.Count() == argNames.Count();
+        }
+
+        public virtual dynamic Select(params string[] args)
+        {
+            var expando = new ExpandoObject() as IDictionary<string, object>;
+
+            args.ForEach(s => expando.Add(s, GetMember(s)));
+
+            return new Gemini(expando);
+        }
+
+        public virtual dynamic Exclude(params string[] args)
+        {
+            var expando = (Hash() as IDictionary<string, object>).ToList();
+
+            var dictionary = new ExpandoObject() as IDictionary<string, object>;
+
+            expando.ForEach(s => 
+            {
+                if (!args.Contains(s.Key as string)) dictionary.Add(s.Key as string, GetMember(s.Key));
+            });
+
+            return new Gemini(dictionary);
         }
     }
 }
