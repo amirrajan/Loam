@@ -6,31 +6,31 @@ using System.Dynamic;
 
 namespace Oak
 {
-    public class MixInChanges
+    public class Changes
     {
-        DynamicModel @this;
+        dynamic @this;
 
         IDictionary<string, dynamic> originalValues;
 
         IDictionary<string, dynamic> CurrentValues()
         {
-            return @this.TrackedProperties();
+            return @this.Hash();
         }
 
-        public MixInChanges(dynamic dynamicModel)
+        public Changes(dynamic gemini)
         {
-            @this = dynamicModel;
+            gemini.SetMember("HasChanged", new DynamicFunctionWithParam(HasChanged));
 
-            originalValues = new Dictionary<string, object>(dynamicModel.TrackedHash());
+            gemini.SetMember("Original", new DynamicFunctionWithParam(Original));
 
-            dynamicModel.SetUnTrackedMember("HasChanged", new DynamicFunctionWithParam(HasChanged));
+            gemini.SetMember("Changes", new DynamicFunctionWithParam(GetChanges));
 
-            dynamicModel.SetUnTrackedMember("Original", new DynamicFunctionWithParam(Original));
+            originalValues = new Dictionary<string, object>(gemini.Hash());
 
-            dynamicModel.SetUnTrackedMember("Changes", new DynamicFunctionWithParam(Changes));
+            @this = gemini;
         }
 
-        public dynamic Changes(dynamic property)
+        public dynamic GetChanges(dynamic property)
         {
             if (property != null) return ChangesFor(property);
 
@@ -80,7 +80,7 @@ namespace Oak
         {
             if (property != null) return HasPropertyChanged(property);
 
-            return (Changes(property) as IDictionary<string, object>).Count > 0;
+            return (GetChanges(property) as IDictionary<string, object>).Any();
         }
 
         public dynamic HasPropertyChanged(dynamic property)

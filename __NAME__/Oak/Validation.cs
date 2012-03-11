@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Oak
 {
-    public class MixInValidation
+    public class Validations
     {
         dynamic @this;
 
@@ -15,7 +15,7 @@ namespace Oak
 
         List<dynamic> errors;
 
-        public MixInValidation(DynamicModel mixWith)
+        public Validations(dynamic mixWith)
         {
             rules = new List<dynamic>();
 
@@ -25,11 +25,11 @@ namespace Oak
 
             if (HasValidationCapabilities(mixWith))
             {
-                mixWith.SetUnTrackedMember("Errors", new DynamicFunction(Errors));
+                mixWith.SetMember("Errors", new DynamicFunction(Errors));
 
-                mixWith.SetUnTrackedMember("IsValid", new DynamicFunctionWithParam(IsValid));
+                mixWith.SetMember("IsValid", new DynamicFunctionWithParam(IsValid));
 
-                mixWith.SetUnTrackedMember("FirstError", new DynamicFunction(FirstError));
+                mixWith.SetMember("FirstError", new DynamicFunction(FirstError));
 
                 IEnumerable<dynamic> validationRules = @this.Validates();
 
@@ -42,9 +42,9 @@ namespace Oak
             }
         }
 
-        public bool HasValidationCapabilities(DynamicModel mixWith)
+        public bool HasValidationCapabilities(dynamic mixWith)
         {
-            return mixWith.GetType().GetMethod("Validates") != null;
+            return mixWith.GetType().GetMethod("Validates") != null || mixWith.RespondsTo("Validates");
         }
 
         public void AddError(string property, string message)
@@ -112,17 +112,12 @@ namespace Oak
 
         public virtual void Init(dynamic entity) 
         {
-            AddTrackedProperty(entity, Property);
+            AddProperty(entity, Property);
         }
 
-        public void AddTrackedProperty(dynamic entity, string property)
+        public void AddProperty(dynamic entity, string property)
         {
             if (!entity.RespondsTo(property)) entity.SetMember(property, null);
-        }
-
-        public void AddUnTrackedProperty(dynamic entity, string property)
-        {
-            if (!entity.RespondsTo(property)) entity.SetUnTrackedMember(property, null);
         }
 
         public virtual string Message()
@@ -175,7 +170,7 @@ namespace Oak
         {
             base.Init(entity as object);
 
-            AddUnTrackedProperty(entity, Property + "Confirmation");
+            AddProperty(entity, Property + "Confirmation");
         }
 
         public bool Validate(dynamic entity)
@@ -374,7 +369,7 @@ namespace Oak
         
         public bool IgnoreNull { get; set; }
         
-        public bool Validate(DynamicModel entity)
+        public bool Validate(dynamic entity)
         {
             dynamic value = entity.GetMember(Property);
 
