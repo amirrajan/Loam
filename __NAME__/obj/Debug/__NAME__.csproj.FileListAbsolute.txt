@@ -1,0 +1,5 @@
+C:\Development\Loam\__NAME__\bin\__NAME__.dll
+C:\Development\Loam\__NAME__\bin\__NAME__.pdb
+C:\Development\Loam\__NAME__\obj\Debug\ResolveAssemblyReference.cache
+C:\Development\Loam\__NAME__\obj\Debug\__NAME__.dll
+C:\Development\Loam\__NAME__\obj\Debug\__NAME__.pdb
