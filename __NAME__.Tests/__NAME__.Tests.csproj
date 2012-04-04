@@ -50,6 +50,12 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\__NAME__\__NAME__.csproj">
+      <Project>{BD2C6A9C-EDB3-4D29-9C89-FD314229C18E}</Project>
+      <Name>__NAME__</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
