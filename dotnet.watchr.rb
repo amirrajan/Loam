@@ -166,7 +166,7 @@ make sure to set your builder to :RakeBuilder
       if(md[0].match /App_Code/) #run the rake command if a web file in App_Code changed
         @dw.sh.execute RakeBuilder.rake_command
       else
-        @dw.sh.execute "rake sync[\"#{ md[0] }\""]  #run rake-dot-net's file sync command if any other web file changed
+        @dw.sh.execute "rake sync[\"#{ md[0] }\"]"  #run rake-dot-net's file sync command if any other web file changed
       end
 
       @dw.notifier.execute "website deployed", "deployed", "green" #growl
