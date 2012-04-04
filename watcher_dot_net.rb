@@ -745,7 +745,7 @@ class WatcherDotNet
     end
     
     if(@first_run)
-      @notifier.execute "specwatchr", "builder: #{@builder.class}\ntest runner: #{@test_runner.class}\nconfig file: dotnet.watchr.rb", "green"
+      @notifier.execute "specwatchr", "feedback loop engaged", "green"
       @first_run = false
     end
 
@@ -758,9 +758,10 @@ class WatcherDotNet
     end
 
     build_output = @builder.execute
+
     puts build_output
     
-    @notifier.execute "build failed", build_output, 'red' if @builder.failed
+    @notifier.execute "build failed", build_output.each_line.first, 'red' if @builder.failed
 
     if @builder.failed
       puts "===================== done consider ========================"
@@ -768,7 +769,9 @@ class WatcherDotNet
     end
 
     if @test_runner.test_dlls.count == 0
-      @notifier.execute "discovery", "specwatchr didn't find any test dll's. specwatchr looks for a .csproj that ends in Test, Tests, Spec, or Specs.  If you do have that, stop specwatchr, rebuild your solution and start specwatchr back up. If you want to explicitly specify the test dll's, you can do so via dotnet.watchr.rb.", "red"
+      @notifier.execute "build done", "didn't find any tests though...see console", "green"
+
+      puts "specwatchr didn't find any test dll's. specwatchr looks for a .csproj that ends in Test, Tests, Spec, or Specs.  If you do have that, stop specwatchr, rebuild your solution and start specwatchr back up. If you want to explicitly specify the test dll's, you can do so via dotnet.watchr.rb."
 
       puts "===================== done consider ========================"
       return
