@@ -37,7 +37,7 @@ namespace Oak
 
             hash.Where(s => properties.Contains(s.Key)).ForEach(kvp => expando.Add(kvp.Key, kvp.Value));
 
-            if(expando.Count == 1) return expando.First().Value;
+            if (expando.Count == 1) return expando.First().Value;
 
             return expando;
         }
@@ -86,6 +86,43 @@ namespace Oak
             return Where(options as object).FirstOrDefault();
         }
 
+        public dynamic OrderBy(dynamic options)
+        {
+            var dict = (options as object).ToExpando() as IDictionary<string, object>;
+
+            dynamic results = Models.AsEnumerable();
+
+            dict.ForEach(kvp => results = Sort(results, kvp.Key, kvp.Value));
+
+            return new DynamicModels(results);
+        }
+
+        public dynamic Sort(IEnumerable<dynamic> models, string property, object direction)
+        {
+            if (models is IOrderedEnumerable<dynamic>)
+            {
+                var ordered = (models as IOrderedEnumerable<dynamic>);
+
+                if (IsAscending(direction)) return ordered.ThenBy(s => ValueFor(s, property));
+
+                return ordered.ThenByDescending(s => ValueFor(s, property));
+            }
+
+            if (IsAscending(direction)) return models.OrderBy(s => ValueFor(s, property));
+
+            return models.OrderByDescending(s => ValueFor(s, property));
+        }
+
+        public dynamic ValueFor(dynamic model, string property)
+        {
+            return ValueFor((ToHash(model) as IDictionary<string, object>)[property]);
+        }
+
+        public bool IsAscending(object value)
+        {
+            return (value as string) == "asc";
+        }
+
         public DynamicModels Where(dynamic options)
         {
             options = (options as object).ToExpando();
@@ -99,13 +136,16 @@ namespace Oak
 
         private bool IsMatch(IDictionary<string, dynamic> options, dynamic model)
         {
-            IDictionary<string, dynamic> hash = null;
-
-            if (model is Gemini) hash = model.Hash();
-
-            else hash = (model as object).ToExpando();
+            IDictionary<string, object> hash = ToHash(model);
 
             return options.All(s => s.Value == ValueFor(hash[s.Key]));
+        }
+
+        private IDictionary<string, object> ToHash(dynamic model)
+        {
+            if (model is Gemini) return model.Hash();
+
+            return (model as object).ToExpando();
         }
 
         private dynamic ValueFor(dynamic value)
