@@ -28,7 +28,7 @@ namespace Oak.Controllers
         /// AlterSampleTable() and AdHocChange()...you'll want to replace 
         /// this with your own set of methods.
         /// </summary>
-        public IEnumerable<Func<string>> Scripts()
+        public IEnumerable<Func<dynamic>> Scripts()
         {
             yield return CreateSampleTable;
 
