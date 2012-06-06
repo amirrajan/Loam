@@ -163,13 +163,22 @@ make sure to set your builder to :RakeBuilder
 =end
   watch ('(.*.cshtml)|(.*.js)|(.*.css)$') do |md|
     if(@dw.config[:builder] == :RakeBuilder && File.exists?("RakeDotNet"))  #make sure that the configuration is set to RakeBuilder and RakeDotNet is installed
+      failed = false #variable to determine if the file sync failed
+
       if(md[0].match /App_Code/) #run the rake command if a web file in App_Code changed
         @dw.sh.execute RakeBuilder.rake_command
       else
-        @dw.sh.execute "rake sync[\"#{ md[0] }\"]"  #run rake-dot-net's file sync command if any other web file changed
+        output = @dw.sh.execute "rake sync[\"#{ md[0] }\"]"  #run rake-dot-net's file sync command if any other web file changed
+        
+        failed = true if output =~ /rake aborted!/ #set failed equal to true if the sync failed
       end
 
-      @dw.notifier.execute "website deployed", "deployed", "green" #growl
+      @dw.notifier.execute "website deployed", "deployed", "green" unless failed #growl
+
+      #notify the dev that the version of rake they are using may be incorrect
+      @dw.notifier.execute "sync failed", 
+        "it looks like the sync failed, this usually happens if the version of rake you are running is NOT 0.8.7.  Please ensure you are running version 0.8.7 of rake. To see the gem versions that are installed, run the command 'gem list' in a command prompt that supports ruby.",
+        "red" if failed
     else
       puts "A web file was encountered, but it looks like you don't have rake-dot-net installed.  I would auto deploy if you did."
     end
