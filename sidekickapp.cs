@@ -45,6 +45,7 @@ namespace SyncDeploy
             process.WaitForExit();
             System.Console.Write(outputReader.ReadToEnd());
             System.Console.Write(errorReader.ReadToEnd());
+            System.Console.WriteLine("---");
         }
 
         static void watcher_Changed(object sender, FileSystemEventArgs e)
