@@ -41,7 +41,7 @@ namespace Oak
 
             return prototype;
         }
-               
+
         public bool Any(dynamic options)
         {
             options = (options as object).ToPrototype();
@@ -159,10 +159,10 @@ namespace Oak
         {
             if (RespondsTo(binder.Name)) return base.TryInvokeMember(binder, args, out result);
 
-            return SelectMany(binder.Name, args, out result);
+            return EagerLoad(binder.Name, args, out result);
         }
 
-        private bool SelectMany(string collectionName, object[] args, out object result)
+        private bool EagerLoad(string collectionName, object[] args, out object result)
         {
             result = new List<dynamic>();
 
@@ -170,11 +170,11 @@ namespace Oak
 
             dynamic options = null;
 
-            if(args.Any()) options = args[0];
+            if (args.Any()) options = args[0];
 
             var association = Models[0].AssociationNamed(collectionName);
 
-            result = association.SelectManyRelatedTo(Models, options);
+            result = association.EagerLoad(Models, options);
 
             return true;
         }
@@ -189,9 +189,37 @@ namespace Oak
             return Models.GetEnumerator();
         }
 
+        public DynamicModels Include(params string[] methods)
+        {
+            var result = new object();
+
+            methods.ForEach(s => 
+            {
+                EagerLoad(s, new object[] { }, out result);
+            });
+
+            return this;
+        }
+
         IEnumerator IEnumerable.GetEnumerator()
         {
             return Models.GetEnumerator();
+        }
+
+        public override string ToString()
+        {
+            var fullString = base.ToString();
+
+            fullString += "========= Entries ===========" + Environment.NewLine;
+
+            foreach (var model in Models)
+            {
+                fullString += model + Environment.NewLine;
+            }
+
+            fullString += "=============================" + Environment.NewLine;
+
+            return fullString;
         }
     }
 }
