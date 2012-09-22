@@ -499,7 +499,7 @@ Here is an example of creating this schema:
         {
             //this is an example, your table name may be different
             //for more information on schema generation <a href=""https://github.com/amirrajan/Oak/wiki/Creating-schema-using-Oak.Seed"" target=""_blank"">check out the Oak wiki</a> 
-            return Seed.CreateTable(""Comments"",
+            return Seed.CreateTable(""Blogs"",
                 Seed.Id(),
                 new { Name = ""nvarchar(255)"" },
                 new { Body = ""nvarchar(max)"" }
@@ -510,7 +510,7 @@ Here is an example of creating this schema:
         {
             //this is an example, your table name may be different
             //for more information on schema generation <a href=""https://github.com/amirrajan/Oak/wiki/Creating-schema-using-Oak.Seed"" target=""_blank"">check out the Oak wiki</a> 
-            return Seed.CreateTable(""Blogs"",
+            return Seed.CreateTable(""Comments"",
                 Seed.Id(),
                 new { BlogId = ""int"", ForeignKey = ""Blogs(Id)"" },
                 new { Body = ""nvarchar(max)"" }
