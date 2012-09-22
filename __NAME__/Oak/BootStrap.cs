@@ -40,8 +40,6 @@ namespace Oak
                 new TutorialBlogIsValid(),
                 new TutorialCommentsRecommendation(),
                 new TutorialAddComment(),
-                new NoDefinitionOnGeminiRecommendation(),
-                new NoDefinitionOnDerivedGeminiRecommendation(),
                 new InvalidColumnRecommendation()
             };
 
@@ -281,6 +279,7 @@ public class HomeController : Controller
     {
         //return all blogs from the database
         ViewBag.Blogs = blogs.All();
+
         return View();
     }
 
@@ -629,7 +628,7 @@ public class Blog : DynamicModel
 
     public Blog(object dto) : base(dto) { }
 
-    IEnumerable<dynamic> Validates()
+    IEnumerable&lt;dynamic&gt; Validates()
     {
         //and define the association
         //for othere examples of validations check out the Oak wiki
@@ -902,12 +901,21 @@ public class Comments : DynamicRepository { }
 
 public class Blog : DynamicModel 
 {
+    Blogs blogs = new Blogs();
+
     //initialize comments
     Comments comments = new Comments();
 
     public Blog() { } 
 
     public Blog(object dto) : base(dto) { }
+
+    IEnumerable&lt;dynamic&gt; Validates()
+    {
+        //and define the association
+        //for othere examples of validations check out the Oak wiki
+        yield return new Uniqueness(""Name"", blogs);
+    }
 
     //add an Associates method to add the Comments() method
     IEnumerable&lt;dynamic&gt; Associates()
