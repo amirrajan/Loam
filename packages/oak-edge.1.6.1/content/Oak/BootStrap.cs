@@ -40,6 +40,49 @@ namespace Oak
 
             mvcApplication.EndRequest += PrintInefficientQueries;
 
+            mvcApplication.BeginRequest += (sender, e) =>
+            {
+                lock (Massive.DynamicRepository.ConsoleLogLock)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkCyan;
+
+                    var printQueryStrings = mvcApplication.Request.QueryString != null && mvcApplication.Request.QueryString.Count > 0;
+
+                    var printForm = mvcApplication.Request.Form != null && mvcApplication.Request.Form.Count > 0;
+
+                    if (printForm || printQueryStrings)
+                    {
+                        Console.Out.WriteLine("\n============ Payload ==========");
+                        Console.Out.WriteLine("For thread: " + Thread.CurrentThread.ManagedThreadId + "\n");
+                    }
+
+                    if (printQueryStrings)
+                    {
+
+                        Console.Out.WriteLine("Query String:");
+                        var qs = mvcApplication.Request.QueryString;
+                        Console.Out.WriteLine(string.Join("\n", qs.AllKeys.Select(s => s + ": " + qs[s])) + "\n");
+
+                    }
+
+                    if (printForm)
+                    {
+
+                        Console.Out.WriteLine("Content:");
+                        Console.Out.WriteLine(new DynamicParams(mvcApplication.Request.Form, null) + "\n");
+
+
+                    }
+
+                    if (printForm || printQueryStrings)
+                    {
+                        Console.Out.WriteLine("================================");
+                    }
+
+                    Console.ResetColor();
+                }
+            };
+
             Massive.DynamicRepository.WriteDevLog = true;
 
             Massive.DynamicRepository.LogSql = (sender, query, args) =>
@@ -96,7 +139,7 @@ namespace Oak
                 recos.Add(reco.GetRecommendation(error));
             }
 
-            if (recos.Any()) WriteRecommendation(mvcApplication, recos);
+            if (applicable.Any()) WriteRecommendation(mvcApplication, recos);
         }
 
         private static void WriteRecommendation(HttpApplication mvcApplication, List<string> applicatableRecommendations)
