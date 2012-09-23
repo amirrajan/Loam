@@ -30,17 +30,19 @@ namespace Oak
 
             Recommendations = new List<Recommendation> 
             {
+                new FirstTimeRecommendation(),
                 new SqlServerNameIsIncorrect(),
                 new CreateDbRecommendation(),
                 new LoginFailedRecommendation(),
                 new TutorialCreateBlogs(),
-                new TutorialCreateComments(),
-                new CreateTableRecommendation(),
-                new FirstTimeRecommendation(),
+                new TutorialProjectionsRecommendation(),
                 new TutorialBlogIsValid(),
-                new TutorialCommentsRecommendation(),
+                new TutorialCreateComments(),
                 new TutorialAddComment(),
-                new InvalidColumnRecommendation()
+                new CreateTableRecommendation(),
+                new InvalidColumnRecommendation(),
+                new NoDefinitionOnDerivedGeminiRecommendation(),
+                new NoDefinitionOnGeminiRecommendation()
             };
 
             mvcApplication.EndRequest += PrintInefficientQueries;
@@ -129,18 +131,17 @@ namespace Oak
 
         private static void ReplaceExceptionWithRecommendationIfApplicable(HttpApplication mvcApplication, Exception error)
         {
-            var applicable = Recommendations.Where(s => s.CanRecommend(error));
+            var applicable = Recommendations.Where(s => s.CanRecommend(error)).FirstOrDefault();
 
             List<string> recos = new List<string>();
 
             recos.Add(OriginalStackTrace(error));
 
-            foreach (var reco in applicable)
+            if(applicable != null) 
             {
-                recos.Add(reco.GetRecommendation(error));
+                recos.Add(applicable.GetRecommendation(error));
+                WriteRecommendation(mvcApplication, recos);
             }
-
-            if (applicable.Any()) WriteRecommendation(mvcApplication, recos);
         }
 
         private static void WriteRecommendation(HttpApplication mvcApplication, List<string> applicatableRecommendations)
@@ -438,7 +439,7 @@ Go to Controller\SeedController.cs and add a method to the Schema class to gener
 that the default convention for Oak is a pluralized table name).<br/><br/>
 Here is an example of creating this schema:
 <pre>
-    public class Schema //this class already exists in SeedController.cs
+    public class Schema
     {
         //this is the method you'll want to alter
         public IEnumerable&lt;Func&lt;dynamic&gt;&gt; Scripts()
@@ -457,8 +458,16 @@ Here is an example of creating this schema:
                 new { Body = ""nvarchar(max)"" }
             );
         }
-    }
 
+        public void SampleEntries()
+        {
+
+        }
+
+        public Seed Seed { get; set; }
+
+        public Schema(Seed seed) { Seed = seed; }
+    }
 </pre>
 
 After adding the function to create your table.  Run this command to execute 
@@ -483,13 +492,14 @@ Go to Controller\SeedController.cs and add a method to the Schema class to gener
 that the default convention for Oak is a pluralized table name).<br/><br/>
 Here is an example of creating this schema:
 <pre>
-    public class Schema //this class already exists in SeedController.cs
+    public class Schema
     {
         //this is the method you'll want to alter
         public IEnumerable&lt;Func&lt;dynamic&gt;&gt; Scripts()
         {
-            yield return CreateBlogsTable;
-            
+            //replace all content inside of the Scripts() method with this line
+            yield return CreateBlogsTable; //return just the <strong>pointer</strong> to the function
+
             yield return CreateCommentsTable; //return just the <strong>pointer</strong> to the function
         }
 
@@ -514,8 +524,16 @@ Here is an example of creating this schema:
                 new { Body = ""nvarchar(max)"" }
             );
         }
-    }
 
+        public void SampleEntries()
+        {
+
+        }
+
+        public Seed Seed { get; set; }
+
+        public Schema(Seed seed) { Seed = seed; }
+    }
 </pre>
 
 After adding the function to create your table.  Run this command to execute 
@@ -595,7 +613,7 @@ You can then run this command to <strong>purge</strong> your database and regen 
         }
     }
 
-    public class TutorialCommentsRecommendation : Recommendation
+    public class TutorialProjectionsRecommendation : Recommendation
     {
         public override bool CanRecommend(Exception e)
         {
@@ -605,7 +623,7 @@ You can then run this command to <strong>purge</strong> your database and regen 
         public override string GetRecommendation(Exception e)
         {
             return @"
-<h2>Tutorial: Updated blogs repository to return a Blog instead of a Gemini</h2>
+<h2>Tutorial: Update blogs repository to return a Blog instead of a Gemini</h2>
 By default dynamic repository returns a ""typeless"" dynamic object (called Gemini).  To get comments
 retrieving, the first thing we need to do is return a Blog from the database.  The way we do this 
 is by defining a projection:
@@ -627,7 +645,7 @@ public class Blog : DynamicModel
 
     public Blog(object dto) : base(dto) { }
 
-    IEnumerable&gt;dynamic&lt; Validates()
+    IEnumerable&lt;dynamic&gt; Validates()
     {
         //and define the association
         //for othere examples of validations check out the Oak wiki
