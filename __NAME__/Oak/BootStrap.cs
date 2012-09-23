@@ -137,7 +137,7 @@ namespace Oak
 
             recos.Add(OriginalStackTrace(error));
 
-            if(applicable != null) 
+            if (applicable != null)
             {
                 recos.Add(applicable.GetRecommendation(error));
                 WriteRecommendation(mvcApplication, recos);
@@ -173,10 +173,18 @@ namespace Oak
         {
             return @"
 <div style='margin: 5px; font-weight: bold'>
-    Here is original error was thrown with some noise taken out (you can also see this error in the IISExpress console):
+    Here is original error was thrown with some noise taken out:
     <pre style=""font-size: 18px"">{message}</pre>
     stacktrace:
     <pre>{scrubbedStackTrace}</pre>
+    <div style=""font-size: 12px; height: 30px"">
+        <div style=""width: 100px; float: right;"">
+         <img src=""http://i.imgur.com/kSZdd.png"" />
+        </div>
+        <div style=""width: 500px; float: right; padding: 3px"">
+            Note: This error can also be seen in the IISExpress console.  Running <pre style=""display: inline; padding: 0px"">rake server</pre> starts up a IIS Express minimized with the following icon:
+        </div>
+    </div>
 </div>".Replace("{message}", error.Message)
        .Replace("{scrubbedStackTrace}", Bullet.ScrubStackTrace(error.ToString()));
         }
@@ -257,8 +265,9 @@ the website at some point and take a look at the screencasts and sample apps (ST
 <a href=""http://amirrajan.github.com/Oak"" target=""_blank"">Oak's Github Page</a></strong>.
 If you want to try Oak out in an interactive way, do the following:<br/>
 Update HomeController.cs and put the follwing <strong>between the namespace block</strong>:
-<h3>The Controller</h3>
+<h3>Step 1 - Update HomeController.cs</h3>
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
 //here is how you setup up a dynamic repository
 public class Blogs : DynamicRepository { }
 
@@ -311,9 +320,10 @@ public class HomeController : Controller
     }
 }
 </pre>
-<h3>The View</h3>
+<h3>Step 2 - Add Home/Index.cshtml</h3>
 Create an Index.cshtml page for the Index action and add the following code there:
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
 @{
     ViewBag.Title = ""Index"";
 }
@@ -439,6 +449,7 @@ Go to Controller\SeedController.cs and add a method to the Schema class to gener
 that the default convention for Oak is a pluralized table name).<br/><br/>
 Here is an example of creating this schema:
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
     public class Schema
     {
         //this is the method you'll want to alter
@@ -472,7 +483,7 @@ Here is an example of creating this schema:
 
 After adding the function to create your table.  Run this command to execute 
 the script (the console window you use to execute this command must have ruby support):
-<pre>rake reset</pre>";
+<pre>rake reset <img src=""http://i.imgur.com/Y2i1G.png"" style=""float: right"" /></pre>";
         }
     }
 
@@ -492,6 +503,7 @@ Go to Controller\SeedController.cs and add a method to the Schema class to gener
 that the default convention for Oak is a pluralized table name).<br/><br/>
 Here is an example of creating this schema:
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
     public class Schema
     {
         //this is the method you'll want to alter
@@ -538,7 +550,7 @@ Here is an example of creating this schema:
 
 After adding the function to create your table.  Run this command to execute 
 the script (the console window you use to execute this command must have ruby support):
-<pre>rake reset</pre>";
+<pre>rake reset <img src=""http://i.imgur.com/Y2i1G.png"" style=""float: right"" /></pre>";
         }
     }
 
@@ -558,6 +570,7 @@ Go to Controller\SeedController.cs and add a method to the Schema class to gener
 that the default convention for Oak is a pluralized table name).<br/><br/>
 Here is an example of creating this schema (let's say I want to create a table called Blogs):
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
     public class Schema //this class already exists in SeedController.cs
     {
         //this is the method you'll want to alter
@@ -583,14 +596,15 @@ Here is an example of creating this schema (let's say I want to create a table c
 
 After adding the function to create your table.  Run this command to execute 
 the script (the console window you use to execute this command must have ruby support):
-<pre>rake reset</pre>
+<pre>rake reset <img src=""http://i.imgur.com/Y2i1G.png"" style=""float: right"" /></pre>
 
-You can see what the script looks like by running this command: <pre>rake export</pre>
+You can see what the script looks like by running this command: <pre>rake export <img src=""http://i.imgur.com/Y2i1G.png"" style=""float: right"" /></pre>
 
 <h2>Use SeedController to create Sample Entries</h2>
 
 I would also recommend looking at the SampleEntries() method in Controllers/SeedController.cs.  You can use that to generate sample data.  For example:
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
 public void SampleEntries()
 {
     //here are a few sample entries
@@ -609,7 +623,7 @@ public void SampleEntries()
 }
 </pre>
 
-You can then run this command to <strong>purge</strong> your database and regen it with sample data: <pre>rake sample</pre>";
+You can then run this command to <strong>purge</strong> your database and regen it with sample data: <pre>rake sample <img src=""http://i.imgur.com/Y2i1G.png"" style=""float: right"" /></pre>";
         }
     }
 
@@ -624,10 +638,12 @@ You can then run this command to <strong>purge</strong> your database and regen 
         {
             return @"
 <h2>Tutorial: Update blogs repository to return a Blog instead of a Gemini</h2>
+<h3>Step 1 - Update the Blogs class located in the HomeController.cs file</h3>
 By default dynamic repository returns a ""typeless"" dynamic object (called Gemini).  To get comments
 retrieving, the first thing we need to do is return a Blog from the database.  The way we do this 
 is by defining a projection:
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
 //our Hello World example
 public class Blogs : DynamicRepository 
 {
@@ -636,31 +652,16 @@ public class Blogs : DynamicRepository
         Projection = dto =&gt; new Blog(dto); //this is a projection
     }
 }
-
-public class Blog : DynamicModel 
-{
-    Blogs blogs = new Blogs();
-
-    public Blog() { }
-
-    public Blog(object dto) : base(dto) { }
-
-    IEnumerable&lt;dynamic&gt; Validates()
-    {
-        //and define the association
-        //for othere examples of validations check out the Oak wiki
-        yield return new Uniqueness(""Name"", blogs);
-    }
-}
 </pre>
 
-<h2>Tutorial: give Blog an association to Comments</h2>
+<h3>Step 2 - In HomeController.cs, declare the Comments repository and give the Blog class an association to Comments</h3>
 With the projection in place, you will now get back a dynamically typed object 
 (as opposed to just a Gemini). Any query that is executed from a ""projected"" 
 dynamic repository (in this case Blogs) will go through this mapping.  Now that the project
 is in place we can add an association to blog to return comments. <strong>Here is how you 
 say ""A blog has many comments""</strong>:
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
 //define the repository to retrieve comments
 public class Comments : DynamicRepository { }
 
@@ -674,13 +675,6 @@ public class Blog : DynamicModel
     public Blog() { }
 
     public Blog(object dto) : base(dto) { }
-
-    IEnumerable&lt;dynamic&gt; Validates()
-    {
-        //and define the association
-        //for othere examples of validations check out the Oak wiki
-        yield return new Uniqueness(""Name"", blogs);
-    }
 
     //add an Associates method to add the Comments() method
     IEnumerable&lt;dynamic&gt; Associates()
@@ -716,6 +710,7 @@ If you are running this through specwatchr/sidekick, you'll need to attach
 the debugger to use the Immediate Window. 
 You can do so by adding the following line in a controller action and refreshing the page:
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
 public class HomeController : Controller
 {
     Blogs blogs = new Blogs();
@@ -742,6 +737,7 @@ public class HomeController : Controller
 By default dynamic repository returns a ""typeless"" dynamic object (called Gemini).  You can return
 a dynamic type by doing the following (again using our Blog example):
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
 //our Hello World example
 public class Blogs : DynamicRepository 
 {
@@ -780,16 +776,26 @@ For more information on dynamic repository methods, take a look at
             return @"
 <h2>Tutorial: Add Validations to Blog</h2>
 If you are performing validations on your objects you can add validation methods through
-Oak.  Here is an example of a validation, <strong>Blog names must be unique</strong>:
+Oak.  Update the Blog class in HomeController.cs. <strong>Blog names must be unique</strong>:
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
 public class Blog : DynamicModel 
 {
+    Comments comments = new Comments();
+
     //initialize blogs
     Blogs blogs = new Blogs();
 
     public Blog() { }
 
     public Blog(object dto) : base(dto) { }
+
+    IEnumerable&lt;dynamic&gt; Associates()
+    {
+        //and define the association
+        //for othere examples of associations <a href=""https://github.com/amirrajan/Oak/wiki/Adding-associations-using-Oak.DynamicModel"" target=""_blank"">check out the Oak wiki</a>
+        yield return new HasMany(comments);
+    }
 
     //add a Validates method to add the IsValid() method
     IEnumerable&lt;dynamic&gt; Validates()
@@ -826,8 +832,9 @@ that have any of the following signatures are considered public automatically:
     <li>dynamic SomeFunction()</li>
     <li>dynamic SomeFunctionWithParam(dynamic args)</li>
 </ul>
-<strong>Change Blog to have an AddComment() method</strong>
+<h3>In HomeController.cs change Blog to have an AddComment method</h3>
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
 public class Blog : DynamicModel
 {
     Blogs blogs = new Blogs();
@@ -904,6 +911,7 @@ If you are attempting to retrieve a relationship on an object from the database.
 define an Association.  Here is an example of an association, <strong>a Blog has many Comments</strong>:
 
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
 //our Hello World example
 public class Blogs : DynamicRepository 
 {
@@ -941,6 +949,7 @@ In the case of the Hello World sample, the code above is how you would add and a
 If you are performing validations on your objects you can add validation methods through
 Oak.  Here is an example of a validation, <strong>Blog names must be unique</strong>:
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
 public class Blog : DynamicModel 
 {
     //initialize blogs
@@ -974,6 +983,7 @@ that have any of the following signatures are considered public automatically:
 </ul>
 <strong>Here is an example of a method where a blog can add a comment to itself</strong>
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
 public class Blog : DynamicModel 
 {
     Comments comments = new Comments();
@@ -1002,6 +1012,7 @@ In the case of the Hello World sample, the code above is how you would get rid o
 The nifty thing about defining dynamic methods implicitly is that they an be 
 redefined in testing (and anywhere else for that matter).  Here is an example:
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
 bool commentAdded = false;
 dynamic blog = new Blog(new { Name = ""Some Name"" });
 blog.AddComment = 
@@ -1034,6 +1045,7 @@ Assert.IsTrue(commentAdded);
 Seed controller can be used to add columns.  It's important to not change existing schema/migration methods in SeedController.  Just
 add new ones.  <strong>Here is an example of adding a BlogId column to a Comments table</strong>:
 <pre>
+<img src=""http://i.imgur.com/YJrrG.png"" style=""float: right"" />
     public class Schema //this class exists in SeedController.cs
     {
         public IEnumerable&lt;Func&lt;dynamic&gt;&gt; Scripts()
@@ -1053,9 +1065,9 @@ add new ones.  <strong>Here is an example of adding a BlogId column to a Comment
     }
 </pre>
 
-After adding the function to create your table.  Run this command to execute the script:<pre>rake reset</pre>
+After adding the function to create your table.  Run this command to execute the script:<pre>rake reset <img src=""http://i.imgur.com/Y2i1G.png"" style=""float: right"" /></pre>
 
-You can see what the script looks like by running this command: <pre>rake export</pre>
+You can see what the script looks like by running this command: <pre>rake export <img src=""http://i.imgur.com/Y2i1G.png"" style=""float: right"" /></pre>
 
 ";
         }
