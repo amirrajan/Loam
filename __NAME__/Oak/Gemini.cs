@@ -8,6 +8,8 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.IO;
 using System.Threading;
+using System.Collections;
+using System.Collections.Specialized;
 
 
 namespace Oak
@@ -118,7 +120,7 @@ namespace Oak
     public delegate void DynamicMethodWithParam(dynamic parameter);
 
     public delegate dynamic DynamicMethod();
-    
+
     [DebuggerNonUserCode]
     public class Gemini : DynamicObject
     {
@@ -213,6 +215,10 @@ namespace Oak
         {
             if (dto == null) dto = new Prototype();
 
+            else if (dto is string || dto.GetType().IsValueType) dto = new { Value = dto };
+
+            else if (dto is IEnumerable && !dto.CanConvertToPrototype()) dto = new { Items = dto };
+
             if (dto is Prototype) Prototype = dto;
 
             else Prototype = dto.ToPrototype();
@@ -232,7 +238,10 @@ namespace Oak
 
         public dynamic AddRedefinableDelegates()
         {
-            foreach (var method in DynamicDelegates(this.GetType())) AddDynamicMember(method);
+            foreach (var method in DynamicDelegates(this.GetType()))
+            {
+                if(!RespondsTo(method.Name)) AddDynamicMember(method);
+            }
 
             return this;
         }
@@ -482,11 +491,16 @@ namespace Oak
 
             if (TryGetMember(property, out result)) return result;
 
-            throw new InvalidOperationException(
+            throw MemberDoesntExistException(property);
+        }
+
+        public InvalidOperationException MemberDoesntExistException(string name)
+        {
+            return new InvalidOperationException(
                 "This instance of type " +
                 this.GetType().Name +
-                " does not respond to the property " +
-                property +
+                " does not respond to the member " +
+                name +
                 ".  These are the members that exist on this instance: " + __Info__());
         }
 

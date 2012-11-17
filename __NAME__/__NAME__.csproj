@@ -35,7 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\oak-edge.1.8.2\lib\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\oak-edge.1.8.4\lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.WebPages" />
@@ -81,6 +81,7 @@
     <Compile Include="Oak\GeminiInfo.cs" />
     <Compile Include="Oak\JsonToDynamic.cs" />
     <Compile Include="Oak\Massive.cs" />
+    <Compile Include="Oak\Memoize.cs" />
     <Compile Include="Oak\ObjectExtensions.cs" />
     <Compile Include="Oak\ParamsModelBinder.cs" />
     <Compile Include="Oak\Query.cs" />
