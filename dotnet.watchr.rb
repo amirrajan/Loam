@@ -237,6 +237,23 @@ when "tutorial"
   tutorial
 when "file_changed"
   file_changed ARGV[1].gsub("\\", "\/")[1..-1] #run the file_changed routine giving it a shell compatible file name
+when "pomo_start"
+  @growl.execute "pomodoro started", "25 mins left", "green"
+  13.times { |i| tick(25 - (i + 1)) }
+  @growl.execute "half way..", "12 mins left", "green"
+  print "\a"
+  12.times { |i| tick(25 - (i + 1 + 13)) }
+  @growl.execute "done", "take a break", "red"
+  print "\a"
+  print "\a"
+  print "\a"
+when "pomo_break"
+  @growl.execute "break started", "7 min left", "green"
+  7.times { |i| tick (i + 1) }
+  @growl.execute "back to it", "aww...", "red"
+  print "\a"
+  print "\a"
+  print "\a"
 else
   puts "I dont know how to run: " + method_to_run
 end
@@ -254,3 +271,4 @@ end
 #watch ('(.*.cshtml)|(.*.js)|(.*.css)$') do |md|
 
 #end
+
