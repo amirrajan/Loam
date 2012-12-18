@@ -230,6 +230,12 @@ def file_changed full_path
   end
 end
 
+def tick i
+  sleep(60)
+  print i.to_s + ".."
+  $stdout.flush
+end
+
 method_to_run = ARGV[0] #get the first argument from the command line and act accordingly
 
 case method_to_run
@@ -238,37 +244,23 @@ when "tutorial"
 when "file_changed"
   file_changed ARGV[1].gsub("\\", "\/")[1..-1] #run the file_changed routine giving it a shell compatible file name
 when "pomo_start"
-  @growl.execute "pomodoro started", "25 mins left", "green"
+  @dw.notifier.execute "pomodoro started", "25 mins left", "green"
   13.times { |i| tick(25 - (i + 1)) }
-  @growl.execute "half way..", "12 mins left", "green"
+  @dw.notifier.execute "half way..", "12 mins left", "green"
   print "\a"
   12.times { |i| tick(25 - (i + 1 + 13)) }
-  @growl.execute "done", "take a break", "red"
+  @dw.notifier.execute "done", "take a break", "red"
   print "\a"
   print "\a"
   print "\a"
 when "pomo_break"
-  @growl.execute "break started", "7 min left", "green"
+  @dw.notifier.execute "break started", "7 min left", "green"
   7.times { |i| tick (i + 1) }
-  @growl.execute "back to it", "aww...", "red"
+  @dw.notifier.execute "back to it", "aww...", "red"
   print "\a"
   print "\a"
   print "\a"
 else
   puts "I dont know how to run: " + method_to_run
 end
-
-
-#this is how the watchr gem determines files to run through spec watchr
-#watch ('.*.\.cs$') do |md| 
-#  handle md[0] 
-#end
-
-#watch ('(.*.csproj$)|(.*.sln$)') do |md| 
-#  reload md[0]
-#end
-
-#watch ('(.*.cshtml)|(.*.js)|(.*.css)$') do |md|
-
-#end
 
