@@ -105,6 +105,7 @@
     <Content Include="Scripts\jquery-1.8.2-vsdoc.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
+    <Content Include="Scripts\underscore.js" />
     <Content Include="specwatchr-usage.txt" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
