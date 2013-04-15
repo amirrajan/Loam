@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>nspec</id>
-    <version>0.9.64</version>
+    <version>0.9.65</version>
     <authors>Matt Florence,  Amir Rajan</authors>
     <owners>Matt Florence,  Amir Rajan</owners>
     <licenseUrl>https://github.com/mattflo/NSpec/blob/master/license.txt</licenseUrl>
