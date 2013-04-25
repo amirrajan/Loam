@@ -5,10 +5,11 @@ using System.Web;
 using System.Web.Mvc;
 using Oak;
 using Massive;
+using Oak.Controllers;
 
 namespace __NAME__.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         public ActionResult Index()
         {
