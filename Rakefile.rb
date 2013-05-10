@@ -9,6 +9,17 @@ require './RakeDotNet/sln_builder.rb'
 require './RakeDotNet/file_sync.rb'
 require 'net/http'
 require 'yaml'
+require './scaffold.rb'
+
+begin
+  require 'nokogiri'
+rescue LoadError
+  puts "============ note ============="
+  puts "looks like you don't have nokogiri installed, to use the scaffolding capabilities of Oak, you'll need to run the command 'gem install nokogiri', type 'rake -D gen' for more information on scaffolding (source located in scaffold.rb)."
+  puts "================================"
+  puts ""
+end
+
 
 task :rake_dot_net_initialize do
   yml = YAML::load File.open("dev.yml")
