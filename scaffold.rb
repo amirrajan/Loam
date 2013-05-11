@@ -61,7 +61,7 @@ namespace :gen do
 
     folder "Scripts/app"
 
-    save js_template(args[:name]), "#{@mvc_project_directory}/Scripts/app/#{name}.js"
+    save js_template(args[:name]), "#{@mvc_project_directory}/Scripts/app/#{args[:name]}.js"
 
     add_js_node args[:name]
   end
@@ -103,7 +103,7 @@ namespace :gen do
     File.open(proj_file, "w") { |f| f.write(doc) }
   end
   
-  def add_js_node folder, name
+  def add_js_node name
     proj_file = "#{@mvc_project_directory}/#{@mvc_project_directory}.csproj"
     doc = Nokogiri::XML(open(proj_file))
     doc.xpath("//xmlns:ItemGroup[xmlns:Content]").first << "<Content Include=\"Scripts\\app\\#{name}.js\" />"
