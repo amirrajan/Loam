@@ -32,6 +32,18 @@ namespace :gen do
     add_compile_node :Controllers, args[:name]
   end
 
+  desc "adds cshtml to your mvc project"
+  task :view, [:controller, :name] => :rake_dot_net_initialize do |t, args|
+    raise "controller parameter required, usage: rake gen:view[Home,Index]" if args[:controller].nil?
+    raise "name parameter required, usage: rake gen:view[Home,Index]" if args[:name].nil?
+
+    folder "Views/#{args[:controller]}"
+
+    save view_template(args[:name]), "#{@mvc_project_directory}/Views/#{args[:controller]}/#{args[:name]}.cshtml"
+
+    add_cshtml_node args[:controller], args[:name]
+  end
+
   def save content, file_path
     raise "#{file_path} already exists, cancelling" if File.exists? file_path
 
@@ -46,6 +58,13 @@ namespace :gen do
     proj_file = "#{@mvc_project_directory}/#{@mvc_project_directory}.csproj"
     doc = Nokogiri::XML(open(proj_file))
     doc.xpath("//xmlns:ItemGroup[xmlns:Compile]").first << "<Compile Include=\"#{folder.to_s}\\#{name}.cs\" />"
+    File.open(proj_file, "w") { |f| f.write(doc) }
+  end
+
+  def add_cshtml_node folder, name
+    proj_file = "#{@mvc_project_directory}/#{@mvc_project_directory}.csproj"
+    doc = Nokogiri::XML(open(proj_file))
+    doc.xpath("//xmlns:ItemGroup[xmlns:Content]").first << "<Content Include=\"Views\\#{folder}\\#{name}.cshtml\" />"
     File.open(proj_file, "w") { |f| f.write(doc) }
   end
 
@@ -104,4 +123,11 @@ namespace #{@mvc_project_directory}.Repositories
 template
 end
 
+def view_template name
+return <<template
+@{
+    ViewBag.Title = "#{name}";
+}
+template
+end
 end
