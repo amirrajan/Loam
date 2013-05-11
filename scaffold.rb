@@ -175,9 +175,9 @@ end
 
 def js_template name
 return <<template
-$(function() {
+$(function () {
 
-})
+});
 template
 end
 
