@@ -3,7 +3,7 @@ namespace :gen do
   task :model, [:name] => :rake_dot_net_initialize do |t, args|
     raise "name parameter required, usage: rake gen:model[Person]" if args[:name].nil?
 
-    FileUtils.mkdir_p "Models"
+    mkdir "Models"
     
     save model_template(args[:name]), "#{@mvc_project_directory}/Models/#{args[:name]}.cs"
 
@@ -14,7 +14,7 @@ namespace :gen do
   task :repo, [:name] => :rake_dot_net_initialize do |t, args|
     raise "name parameter required, usage: rake gen:repository[People]" if args[:name].nil?
 
-    FileUtils.mkdir_p "Repositories"
+    mkdir "Repositories"
 
     save repo_template(args[:name]), "#{@mvc_project_directory}/Repositories/#{args[:name]}.cs"
 
@@ -25,7 +25,7 @@ namespace :gen do
   task :controller, [:name] => :rake_dot_net_initialize do |t, args|
     raise "name parameter required, usage: rake gen:controller[PeopleController]" if args[:name].nil?
 
-    FileUtils.mkdir_p "Controllers"
+    mkdir "Controllers"
 
     save controller_template(args[:name]), "#{@mvc_project_directory}/Controllers/#{args[:name]}.cs"
 
@@ -36,6 +36,10 @@ namespace :gen do
     raise "#{file_path} already exists, cancelling" if File.exists? file_path
 
     File.open(file_path, "w") { |f| f.write(content) }
+  end
+
+  def mkdir dir
+    FileUtils.mkdir_p "#{@mvc_project_directory}/#{dir}"
   end
 
   def add_compile_node folder, name
