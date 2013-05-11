@@ -86,8 +86,7 @@ namespace :gen do
   end
 
   def add_compile_node folder, name, project = nil
-    proj_file = project || "#{@mvc_project_directory}/#{@mvc_project_directory}.csproj"
-    doc = Nokogiri::XML(open(proj_file))
+    doc = Nokogiri::XML(open(project || proj_file))
     if(folder == :root)
       doc.xpath("//xmlns:ItemGroup[xmlns:Compile]").first << "<Compile Include=\"#{name}.cs\" />"
     else
@@ -97,17 +96,19 @@ namespace :gen do
   end
 
   def add_cshtml_node folder, name
-    proj_file = "#{@mvc_project_directory}/#{@mvc_project_directory}.csproj"
     doc = Nokogiri::XML(open(proj_file))
     doc.xpath("//xmlns:ItemGroup[xmlns:Content]").first << "<Content Include=\"Views\\#{folder}\\#{name}.cshtml\" />"
     File.open(proj_file, "w") { |f| f.write(doc) }
   end
   
   def add_js_node name
-    proj_file = "#{@mvc_project_directory}/#{@mvc_project_directory}.csproj"
     doc = Nokogiri::XML(open(proj_file))
     doc.xpath("//xmlns:ItemGroup[xmlns:Content]").first << "<Content Include=\"Scripts\\app\\#{name}.js\" />"
     File.open(proj_file, "w") { |f| f.write(doc) }
+  end
+
+  def proj_file
+    "#{@mvc_project_directory}/#{@mvc_project_directory}.csproj"
   end
 
 def model_template name
