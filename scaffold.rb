@@ -2,6 +2,8 @@ namespace :gen do
   desc "adds a dynamic model class to your mvc project"
   task :model, [:name] => :rake_dot_net_initialize do |t, args|
     raise "name parameter required, usage: rake gen:model[Person]" if args[:name].nil?
+
+    FileUtils.mkdir_p "Models"
     
     save model_template(args[:name]), "#{@mvc_project_directory}/Models/#{args[:name]}.cs"
 
@@ -12,6 +14,8 @@ namespace :gen do
   task :repo, [:name] => :rake_dot_net_initialize do |t, args|
     raise "name parameter required, usage: rake gen:repository[People]" if args[:name].nil?
 
+    FileUtils.mkdir_p "Repositories"
+
     save repo_template(args[:name]), "#{@mvc_project_directory}/Repositories/#{args[:name]}.cs"
 
     add_compile_node :Repositories, args[:name]
@@ -20,6 +24,8 @@ namespace :gen do
   desc "adds a controller class to your mvc project"
   task :controller, [:name] => :rake_dot_net_initialize do |t, args|
     raise "name parameter required, usage: rake gen:controller[PeopleController]" if args[:name].nil?
+
+    FileUtils.mkdir_p "Controllers"
 
     save controller_template(args[:name]), "#{@mvc_project_directory}/Controllers/#{args[:name]}.cs"
 
