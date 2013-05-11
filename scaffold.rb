@@ -59,9 +59,9 @@ namespace :gen do
   take :test, [:name] => :rake_dot_net_initialize do |t, args|
     raise "name parameter required, usage: rake gen:test[decribe_HomeController]" if args[:name].nil?
 
-    save controller_template(args[:name]), "#{@mvc_project_directory}/Controllers/#{args[:name]}.cs"
+    save test_template(args[:name]), "#{@test_project}/#{args[:name]}.cs"
 
-    add_compile_node :Controllers, args[:name]
+    add_compile_node :root, args[:name], "#{@test_project}/#{@test_project}.csproj"
   end
 
   def save content, file_path
@@ -74,10 +74,14 @@ namespace :gen do
     FileUtils.mkdir_p "./#{@mvc_project_directory}/#{dir}/"
   end
 
-  def add_compile_node folder, name
-    proj_file = "#{@mvc_project_directory}/#{@mvc_project_directory}.csproj"
+  def add_compile_node folder, name, project = nil
+    proj_file = project || "#{@mvc_project_directory}/#{@mvc_project_directory}.csproj"
     doc = Nokogiri::XML(open(proj_file))
-    doc.xpath("//xmlns:ItemGroup[xmlns:Compile]").first << "<Compile Include=\"#{folder.to_s}\\#{name}.cs\" />"
+    if(folder == :root)
+      doc.xpath("//xmlns:ItemGroup[xmlns:Compile]").first << "<Compile Include=\"#{name}.cs\" />"
+    else
+      doc.xpath("//xmlns:ItemGroup[xmlns:Compile]").first << "<Compile Include=\"#{folder.to_s}\\#{name}.cs\" />"
+    end
     File.open(proj_file, "w") { |f| f.write(doc) }
   end
 
@@ -148,6 +152,11 @@ return <<template
 @{
     ViewBag.Title = "#{name}";
 }
+template
+end
+
+def test_template name
+return <<template
 template
 end
 end
