@@ -55,6 +55,17 @@ namespace :gen do
     add_cshtml_node controller, name
   end
 
+  desc "adds javascript file to your mvc project"
+  task :script, [:name] => :rake_dot_net_initialize do |t, args|
+    raise "js name required, usage: rake gen:script[index]" if args[:name].split(':').count == 1
+
+    folder "Scripts/app"
+
+    save js_template(name), "#{@mvc_project_directory}/Scripts/app/#{name}.js"
+
+    add_cshtml_node controller, name
+  end
+
   desc "adds a test file to your test project"
   task :test, [:name] => :rake_dot_net_initialize do |t, args|
     raise "name parameter required, usage: rake gen:test[decribe_HomeController]" if args[:name].nil?
@@ -89,6 +100,13 @@ namespace :gen do
     proj_file = "#{@mvc_project_directory}/#{@mvc_project_directory}.csproj"
     doc = Nokogiri::XML(open(proj_file))
     doc.xpath("//xmlns:ItemGroup[xmlns:Content]").first << "<Content Include=\"Views\\#{folder}\\#{name}.cshtml\" />"
+    File.open(proj_file, "w") { |f| f.write(doc) }
+  end
+  
+  def add_js_node folder, name
+    proj_file = "#{@mvc_project_directory}/#{@mvc_project_directory}.csproj"
+    doc = Nokogiri::XML(open(proj_file))
+    doc.xpath("//xmlns:ItemGroup[xmlns:Content]").first << "<Content Include=\"Scripts\\app\\#{name}.js\" />"
     File.open(proj_file, "w") { |f| f.write(doc) }
   end
 
@@ -155,6 +173,14 @@ return <<template
 template
 end
 
+def js_template name
+return <<template
+$(function() {
+
+})
+template
+end
+
 def test_template name
 return <<template
 using System;
@@ -162,6 +188,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NSpec;
+using Oak.Controllers;
 
 namespace #{@test_project}
 {
