@@ -56,7 +56,7 @@ namespace :gen do
   end
 
   desc "adds a test file to your test project"
-  take :test, [:name] => :rake_dot_net_initialize do |t, args|
+  task :test, [:name] => :rake_dot_net_initialize do |t, args|
     raise "name parameter required, usage: rake gen:test[decribe_HomeController]" if args[:name].nil?
 
     save test_template(args[:name]), "#{@test_project}/#{args[:name]}.cs"
@@ -157,6 +157,26 @@ end
 
 def test_template name
 return <<template
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using NSpec;
+
+namespace #{@test_project}
+{
+    class #{name} : nspec
+    {
+        SeedController seed;
+
+        void before_each()
+        {
+            seed = new SeedController();
+            seed.PurgeDb();
+            seed.All();
+        }
+    }
+}
 template
 end
 end
