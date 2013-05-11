@@ -3,7 +3,7 @@ namespace :gen do
   task :model, [:name] => :rake_dot_net_initialize do |t, args|
     raise "name parameter required, usage: rake gen:model[Person]" if args[:name].nil?
 
-    mkdir "Models"
+    folder "Models"
     
     save model_template(args[:name]), "#{@mvc_project_directory}/Models/#{args[:name]}.cs"
 
@@ -14,7 +14,7 @@ namespace :gen do
   task :repo, [:name] => :rake_dot_net_initialize do |t, args|
     raise "name parameter required, usage: rake gen:repository[People]" if args[:name].nil?
 
-    mkdir "Repositories"
+    folder "Repositories"
 
     save repo_template(args[:name]), "#{@mvc_project_directory}/Repositories/#{args[:name]}.cs"
 
@@ -25,7 +25,7 @@ namespace :gen do
   task :controller, [:name] => :rake_dot_net_initialize do |t, args|
     raise "name parameter required, usage: rake gen:controller[PeopleController]" if args[:name].nil?
 
-    mkdir "Controllers"
+    folder "Controllers"
 
     save controller_template(args[:name]), "#{@mvc_project_directory}/Controllers/#{args[:name]}.cs"
 
@@ -38,8 +38,8 @@ namespace :gen do
     File.open(file_path, "w") { |f| f.write(content) }
   end
 
-  def mkdir dir
-    FileUtils.mkdir_p "#{@mvc_project_directory}/#{dir}"
+  def folder dir
+    FileUtils.mkdir_p "./#{@mvc_project_directory}/#{dir}/"
   end
 
   def add_compile_node folder, name
@@ -62,8 +62,8 @@ namespace #{@mvc_project_directory}.Models
 {
     public class #{name} : DynamicModel
     {
-        public Peep(object dto) : base(dto) { }
-        public Peep() { }
+        public #{name}(object dto) : base(dto) { }
+        public #{name}() { }
         //IEnumerable<dynamic> Validates() { }
         //IEnumerable<dynamic> Associates() { }
     }
