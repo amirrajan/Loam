@@ -88,24 +88,28 @@ namespace :gen do
   def add_compile_node folder, name, project = nil
     to_open = project || proj_file
     doc = Nokogiri::XML(open(to_open))
-    if(folder == :root)
-      doc.xpath("//xmlns:ItemGroup[xmlns:Compile]").first << "<Compile Include=\"#{name}.cs\" />"
+    if folder == :root
+      add_include doc, :Compile, "#{name}.cs"
     else
-      doc.xpath("//xmlns:ItemGroup[xmlns:Compile]").first << "<Compile Include=\"#{folder.to_s}\\#{name}.cs\" />"
+      add_include doc, :Compile, "#{folder.to_s}\\#{name}.cs"
     end
     File.open(to_open, "w") { |f| f.write(doc) }
   end
 
   def add_cshtml_node folder, name
     doc = Nokogiri::XML(open(proj_file))
-    doc.xpath("//xmlns:ItemGroup[xmlns:Content]").first << "<Content Include=\"Views\\#{folder}\\#{name}.cshtml\" />"
+    add_include doc, :Content, "Views\\#{folder}\\#{name}.cshtml"
     File.open(proj_file, "w") { |f| f.write(doc) }
   end
   
   def add_js_node name
     doc = Nokogiri::XML(open(proj_file))
-    doc.xpath("//xmlns:ItemGroup[xmlns:Content]").first << "<Content Include=\"Scripts\\app\\#{name}.js\" />"
+    add_include doc, :Content, "Scripts\\app\\#{name}.js"
     File.open(proj_file, "w") { |f| f.write(doc) }
+  end
+
+  def add_include doc, type, value
+    doc.xpath("//xmlns:ItemGroup[xmlns:#{type.to_s}]").first << "<#{type.to_s} Include=\"#{value}\" />"
   end
 
   def proj_file
