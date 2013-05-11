@@ -1,3 +1,12 @@
+begin
+  require 'nokogiri'
+rescue LoadError
+  puts "============ note ============="
+  puts "looks like you don't have nokogiri installed, to use the scaffolding capabilities of Oak, you'll need to run the command 'gem install nokogiri', type 'rake -D gen' for more information on scaffolding (source located in scaffold.rb)."
+  puts "================================"
+  puts ""
+end
+
 namespace :gen do
   desc "adds a dynamic model class to your mvc project"
   task :model, [:name] => :rake_dot_net_initialize do |t, args|
@@ -33,15 +42,26 @@ namespace :gen do
   end
 
   desc "adds cshtml to your mvc project"
-  task :view, [:controller, :name] => :rake_dot_net_initialize do |t, args|
-    raise "controller parameter required, usage: rake gen:view[Home,Index]" if args[:controller].nil?
-    raise "name parameter required, usage: rake gen:view[Home,Index]" if args[:name].nil?
+  task :view, [:controller_and_name] => :rake_dot_net_initialize do |t, args|
+    controller = args[:controller_and_name].split(':').first
+    name = args[:controller_and_name].split(':').last
 
-    folder "Views/#{args[:controller]}"
+    raise "controller and view name required, usage: rake gen:view[Home:Index]" if args[:controller_and_name].split(':').count == 1
 
-    save view_template(args[:name]), "#{@mvc_project_directory}/Views/#{args[:controller]}/#{args[:name]}.cshtml"
+    folder "Views/#{controller}"
 
-    add_cshtml_node args[:controller], args[:name]
+    save view_template(name), "#{@mvc_project_directory}/Views/#{controller}/#{name}.cshtml"
+
+    add_cshtml_node controller, name
+  end
+
+  desc "adds a test file to your test project"
+  take :test, [:name] => :rake_dot_net_initialize do |t, args|
+    raise "name parameter required, usage: rake gen:test[decribe_HomeController]" if args[:name].nil?
+
+    save controller_template(args[:name]), "#{@mvc_project_directory}/Controllers/#{args[:name]}.cs"
+
+    add_compile_node :Controllers, args[:name]
   end
 
   def save content, file_path

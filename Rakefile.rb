@@ -11,16 +11,6 @@ require 'net/http'
 require 'yaml'
 require './scaffold.rb'
 
-begin
-  require 'nokogiri'
-rescue LoadError
-  puts "============ note ============="
-  puts "looks like you don't have nokogiri installed, to use the scaffolding capabilities of Oak, you'll need to run the command 'gem install nokogiri', type 'rake -D gen' for more information on scaffolding (source located in scaffold.rb)."
-  puts "================================"
-  puts ""
-end
-
-
 task :rake_dot_net_initialize do
   yml = YAML::load File.open("dev.yml")
   @website_port = yml["website_port"]
@@ -31,6 +21,8 @@ task :rake_dot_net_initialize do
   @website_deploy_directory_load_balanced_2 = yml["website_deploy_directory_load_balanced_2"]
   @solution_name = "#{ yml["solution_name"] }.sln"
   @mvc_project_directory = yml["mvc_project"]
+
+  @test_project = yml["test_project"]
   @test_dll = "./#{ yml["test_project"] }/bin/debug/#{ yml["test_project"] }.dll"
 
   @test_runner_path = yml["test_runner"]
