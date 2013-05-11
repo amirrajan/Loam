@@ -86,7 +86,9 @@ namespace :gen do
   end
 
   def add_compile_node folder, name, project = nil
+    puts project
     to_open = project || proj_file
+    puts to_open
     doc = Nokogiri::XML(open(to_open))
     if(folder == :root)
       doc.xpath("//xmlns:ItemGroup[xmlns:Compile]").first << "<Compile Include=\"#{name}.cs\" />"
