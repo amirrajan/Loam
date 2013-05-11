@@ -57,13 +57,13 @@ namespace :gen do
 
   desc "adds javascript file to your mvc project"
   task :script, [:name] => :rake_dot_net_initialize do |t, args|
-    raise "js name required, usage: rake gen:script[index]" if args[:name].split(':').count == 1
+    raise "js name required, usage: rake gen:script[index]" if args[:name].nil?
 
     folder "Scripts/app"
 
-    save js_template(name), "#{@mvc_project_directory}/Scripts/app/#{name}.js"
+    save js_template(args[:name]), "#{@mvc_project_directory}/Scripts/app/#{name}.js"
 
-    add_cshtml_node controller, name
+    add_js_node args[:name]
   end
 
   desc "adds a test file to your test project"
