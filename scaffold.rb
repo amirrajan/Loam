@@ -3,6 +3,8 @@ begin
 rescue LoadError
   puts "============ note ============="
   puts "looks like you don't have nokogiri installed, to use the scaffolding capabilities of Oak, you'll need to run the command 'gem install nokogiri', type 'rake -D gen' for more information on scaffolding (source located in scaffold.rb)."
+  puts "you *DO NOT* need scaffolding for the Oak interactive tutorial"
+  puts "if that's what you're running through, don't worry about this message yet"
   puts "================================"
   puts ""
 end
