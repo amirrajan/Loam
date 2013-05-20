@@ -30,6 +30,26 @@ namespace :gen do
     add_compile_node :Repositories, args[:name]
   end
 
+  desc "adds a dynamic repository with a projection to a dynamic model"
+  task :repo_model, [:repo_and_model_name] => :rake_dot_net_initialize do |t, args|
+    repo = args[:repo_and_model_name].split(':').first
+    model = args[:repo_and_model_name].split(':').last
+
+    raise "repostiory and model name required, usage: rake gen:repo_model[Blogs:Blog]" if args[:repo_and_model_name].split(':').count == 1
+
+    folder "Models"
+    
+    save model_template(model), "#{@mvc_project_directory}/Models/#{model}.cs"
+
+    add_compile_node :Models, model
+
+    folder "Repositories"
+
+    save projection_repo_template(repo, model), "#{@mvc_project_directory}/Repositories/#{repo}.cs"
+
+    add_compile_node :Repositories, repo
+  end
+
   desc "adds a controller class to your mvc project"
   task :controller, [:name] => :rake_dot_net_initialize do |t, args|
     raise "name parameter required, usage: rake gen:controller[PeopleController]" if args[:name].nil?
@@ -167,6 +187,30 @@ using Massive;
 namespace #{@mvc_project_directory}.Repositories
 {
     public class #{name} : DynamicRepository { }
+}
+template
+end
+
+def projection_repo_template name, model_name
+return <<template
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Oak;
+using Massive;
+using #{@mvc_project_directory}.Models;
+
+namespace #{@mvc_project_directory}.Repositories
+{
+    public class #{name} : DynamicRepository
+    {
+        public #{name}()
+        {
+            Projection = d => new #{model_name}(d);
+        }
+    }
 }
 template
 end
