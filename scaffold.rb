@@ -8,9 +8,9 @@ rescue LoadError
 end
 
 namespace :gen do
-  desc "adds a dynamic model class to your mvc project"
+  desc "adds a dynamic model class to your mvc project, example: rake gen:model[Blog]"
   task :model, [:name] => :rake_dot_net_initialize do |t, args|
-    raise "name parameter required, usage: rake gen:model[Person]" if args[:name].nil?
+    raise "name parameter required, example: rake gen:model[Blog]" if args[:name].nil?
 
     folder "Models"
     
@@ -19,9 +19,9 @@ namespace :gen do
     add_compile_node :Models, args[:name]
   end
 
-  desc "adds a dynamic repository class to your mvc project"
+  desc "adds a dynamic repository class to your mvc project, example: rake gen:repo[Blogs]"
   task :repo, [:name] => :rake_dot_net_initialize do |t, args|
-    raise "name parameter required, usage: rake gen:repository[People]" if args[:name].nil?
+    raise "name parameter required, example: rake gen:repository[Blogs]" if args[:name].nil?
 
     folder "Repositories"
 
@@ -30,12 +30,12 @@ namespace :gen do
     add_compile_node :Repositories, args[:name]
   end
 
-  desc "adds a dynamic repository with a projection to a dynamic model"
+  desc "adds a dynamic repository with a projection to a dynamic model, example: rake gen:repo_model[Blogs:Blog]"
   task :repo_model, [:repo_and_model_name] => :rake_dot_net_initialize do |t, args|
     repo = args[:repo_and_model_name].split(':').first
     model = args[:repo_and_model_name].split(':').last
 
-    raise "repostiory and model name required, usage: rake gen:repo_model[Blogs:Blog]" if args[:repo_and_model_name].split(':').count == 1
+    raise "repostiory and model name required, example: rake gen:repo_model[Blogs:Blog]" if args[:repo_and_model_name].split(':').count == 1
 
     folder "Models"
     
@@ -50,23 +50,25 @@ namespace :gen do
     add_compile_node :Repositories, repo
   end
 
-  desc "adds a controller class to your mvc project"
+  desc "adds a controller class to your mvc project, example: rake gen:controller[Blogs]"
   task :controller, [:name] => :rake_dot_net_initialize do |t, args|
-    raise "name parameter required, usage: rake gen:controller[PeopleController]" if args[:name].nil?
+    raise "name parameter required, example: rake gen:controller[Blogs]" if args[:name].nil?
 
     folder "Controllers"
 
-    save controller_template(args[:name]), "#{@mvc_project_directory}/Controllers/#{args[:name]}.cs"
+    controller_name = args[:name] + "Controller"
 
-    add_compile_node :Controllers, args[:name]
+    save controller_template(controller_name), "#{@mvc_project_directory}/Controllers/#{controller_name}.cs"
+
+    add_compile_node :Controllers, controller_name
   end
 
-  desc "adds cshtml to your mvc project"
-  task :view, [:controller_and_name] => :rake_dot_net_initialize do |t, args|
-    controller = args[:controller_and_name].split(':').first
-    name = args[:controller_and_name].split(':').last
+  desc "adds a cshtml to your mvc project, example: rake gen:view[Home:Index]"
+  task :view, [:controller_and_view_name] => :rake_dot_net_initialize do |t, args|
+    controller = args[:controller_and_view_name].split(':').first
+    name = args[:controller_and_view_name].split(':').last
 
-    raise "controller and view name required, usage: rake gen:view[Home:Index]" if args[:controller_and_name].split(':').count == 1
+    raise "controller and view name required, example: rake gen:view[Home:Index]" if args[:controller_and_view_name].split(':').count == 1
 
     folder "Views/#{controller}"
 
@@ -75,9 +77,9 @@ namespace :gen do
     add_cshtml_node controller, name
   end
 
-  desc "adds javascript file to your mvc project"
+  desc "adds javascript file to your mvc project, example: rake gen:script[index]"
   task :script, [:name] => :rake_dot_net_initialize do |t, args|
-    raise "js name required, usage: rake gen:script[index]" if args[:name].nil?
+    raise "js name required, example: rake gen:script[index]" if args[:name].nil?
 
     folder "Scripts/app"
 
@@ -86,9 +88,9 @@ namespace :gen do
     add_js_node args[:name]
   end
 
-  desc "adds a test file to your test project"
+  desc "adds a test file to your test project, example: rake gen:test[describe_BlogsController]"
   task :test, [:name] => :rake_dot_net_initialize do |t, args|
-    raise "name parameter required, usage: rake gen:test[decribe_HomeController]" if args[:name].nil?
+    raise "name parameter required, example: rake gen:test[decribe_HomeController]" if args[:name].nil?
 
     save test_template(args[:name]), "#{@test_project}/#{args[:name]}.cs"
 
