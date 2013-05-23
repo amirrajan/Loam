@@ -10,3 +10,4 @@ test_project: __NAME__.Tests #just the folder name, no .csproj extension
 test_runner: ./packages/nspec.0.9.66/tools/NSpecRunner.exe
 iis_express: C:\Program Files (x86)\IIS Express
 database_name: __NAME__
+database_server: (local)
