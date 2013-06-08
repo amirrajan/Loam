@@ -12,7 +12,7 @@ namespace :stacktrace do
   end
 
   desc "runs tests and writes any failures to stacktrace.txt so that stacktrace:gen_tests_preview can be executed"
-  task :tests do
+  task :tests => :rake_dot_net_initialize do
     results = `#{@test_runner_command}`
 
     puts results
