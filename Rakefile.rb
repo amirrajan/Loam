@@ -10,6 +10,7 @@ require './RakeDotNet/file_sync.rb'
 require 'net/http'
 require 'yaml'
 require './scaffold.rb'
+require './stacktrace.rb'
 
 task :rake_dot_net_initialize do
   yml = YAML::load File.open("dev.yml")
@@ -62,12 +63,15 @@ end
 
 desc "if you have the nuget package oak installed, use this to seed sample data"
 task :sample => :rake_dot_net_initialize do
+  puts "you can run 'rake export' to generate the sql files"
   reset_db
   puts Net::HTTP.post_form(URI.parse("http://localhost:#{@website_port.to_s}/seed/SampleEntries"), { })
 end
 
 desc "if you have the nuget package oak installed, use this to reset the database"
 task :reset => :rake_dot_net_initialize do
+  puts "you can run 'rake export' to generate the sql files"
+
   reset_db
 end
 
@@ -79,6 +83,9 @@ end
 desc "run nspec tests"
 task :tests => :build do
   puts "Could not find the NSpec test runner at location #{ @test_runner_path }, update your dev.yml to point to the correct runner location." if !File.exists? @test_runner_path
+
+  puts "if you have any failures, you can run 'rake stacktrace:tests' for a nice stacktrace visualization"
+
   sh @test_runner_command if File.exists? @test_runner_path
 end
 
