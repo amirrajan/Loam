@@ -11,7 +11,17 @@ namespace SyncDeploy
     {
         static string path = null; 
         static FileSystemWatcher watcher;
-
+		    static string[] fileExtensionsWhiteList = new string[]
+        {
+          ".cs",
+          ".coffee",
+          ".rb",
+          ".html",
+          ".cshtml",
+          ".js",
+          ".css",
+          ".fs"
+        };
         static void Main(string[] args)
         {
             path = Directory.GetCurrentDirectory();
@@ -22,6 +32,7 @@ namespace SyncDeploy
             watcher.Changed += new FileSystemEventHandler(watcher_Changed);
             watcher.Created += new FileSystemEventHandler(watcher_Changed);
             watcher.Renamed += watcher_Renamed;
+            Console.WriteLine("Watching for changes to the following file types: " + string.Join(", ", fileExtensionsWhiteList));
             Console.WriteLine("Watching " + path + " for changes, press Enter to stop...");
             Shell("tutorial");
             Console.ReadLine();
@@ -62,7 +73,7 @@ namespace SyncDeploy
 
         static void CallWatcher(string path)
         {
-            if(System.IO.File.Exists(path))
+            if (fileExtensionsWhiteList.Contains(Path.GetExtension(path)) && System.IO.File.Exists(path))
             {
                 watcher.EnableRaisingEvents = false;
                 var relativeFile = path.Replace(Directory.GetCurrentDirectory(), "");
