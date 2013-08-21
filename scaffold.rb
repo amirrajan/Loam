@@ -2,9 +2,14 @@ begin
   require 'nokogiri'
 rescue LoadError
   puts "============ note ============="
-  puts "looks like you don't have nokogiri installed, to use the scaffolding capabilities of Oak, you'll need to run the command 'gem install nokogiri', type 'rake -D gen' for more information on scaffolding (source located in scaffold.rb)."
-  puts "you *DO NOT* need scaffolding for the Oak interactive tutorial"
-  puts "if that's what you're running through, don't worry about this message yet"
+  puts "Looks like you don't have nokogiri installed. Nokogiri is used to help you quickly scaffold models, view and controllers:" 
+  puts "You *DO NOT* need scaffolding for the Oak interactive tutorial, or any development (just a nice to have)"
+  puts "So don't worry about this note if you don't want scaffolding"
+  puts "Instructions for setting up nokogiri (one time):"
+  puts "  - Install chocolatey by running the powershell script located at chocolatey.org" 
+  puts "  - After chocolatey is installed, run the command: cinst ruby.devkit (if you haven't installed ruby's DevKit)" 
+  puts "  - Then run the command 'gem install nokogiri'"
+  puts "  - Type 'rake -D gen' for more information on scaffolding (the source located in scaffold.rb)."
   puts "================================"
   puts ""
 end
