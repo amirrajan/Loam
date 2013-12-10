@@ -71,7 +71,7 @@ class MSBuilder
   end
 
   def build_cmd file
-    "\"#{MSBuilder.ms_build_path}\" \"#{file}\" /verbosity:quiet /nologo"
+    "\"#{MSBuilder.ms_build_path}\" \"#{file}\" /verbosity:quiet /nologo /p:Platform=\"Any CPU\""
   end
 
   def self.ms_build_path
@@ -806,7 +806,7 @@ class WatcherDotNet
     build_output = @builder.execute
     puts build_output
     
-    if !(build_output =~ /another process/)
+    if !(build_output =~ /another process/) #supress build failures associated with pdb files
       @notifier.execute "build failed", build_output, 'red' if @builder.failed
     end
 
